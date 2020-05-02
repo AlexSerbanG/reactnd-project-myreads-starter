@@ -1,3 +1,5 @@
+export * from "./mapping";
+
 export const debounce = (fn, delay) => {
   let timer = null;
   return function(...args) {
