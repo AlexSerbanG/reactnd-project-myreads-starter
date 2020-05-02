@@ -1,21 +1,30 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Book } from "../Book";
 import "./Shelf.css";
 
-const Shelf = () => (
+const Shelf = ({ title, books }) => (
   <div className="bookshelf">
-    <h2 className="bookshelf-title">Currently Reading</h2>
+    {!!title && <h2 className="bookshelf-title">{title}</h2>}
     <div className="bookshelf-books">
       <ol className="books-grid">
-        <li>
-          <Book />
-        </li>
-        <li>
-          <Book />
-        </li>
+        {books.map((book) => (
+          <li key={book.id}>
+            <Book {...book} />
+          </li>
+        ))}
       </ol>
     </div>
   </div>
 );
+
+Shelf.defaultProps = {
+  title: "",
+};
+
+Shelf.propTypes = {
+  books: PropTypes.arrayOf(PropTypes.object).isRequired,
+  title: PropTypes.string,
+};
 
 export default Shelf;

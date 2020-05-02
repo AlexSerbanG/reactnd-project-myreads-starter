@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Link, withRouter } from "react-router-dom";
 import { Shelf } from "../Shelf";
 import * as BooksAPI from "../BooksAPI";
-import { debounce } from "../utils";
+import { debounce, bookFromDb } from "../utils";
 import "./SearchPage.css";
 
 class SearchPage extends React.Component {
@@ -30,7 +30,7 @@ class SearchPage extends React.Component {
     if (query.trim()) {
       BooksAPI.search(query.trim()).then((result) => {
         this.setState({
-          books: result.error ? [] : result,
+          books: result.error ? [] : result.map(bookFromDb),
         });
       });
     }
