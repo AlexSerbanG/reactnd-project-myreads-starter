@@ -4,3 +4,27 @@ export const ShelfType = [
   { id: "read", label: "Read", visible: true },
   { id: "none", visible: false },
 ];
+
+export const SelectOptions = [
+  {
+    value: "move",
+    label: "Move to...",
+    disabled: true,
+  },
+  {
+    value: "currentlyReading",
+    label: "Currently Reading",
+  },
+  {
+    value: "wantToRead",
+    label: "Want to Read",
+  },
+  {
+    value: "read",
+    label: "Read",
+  },
+  {
+    value: "none",
+    label: "None",
+  },
+];

@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Shelf } from "../Shelf";
 import * as BooksAPI from "../BooksAPI";
 import { debounce, bookFromDb } from "../utils";
@@ -27,11 +27,25 @@ class SearchPage extends React.Component {
 
   getBooksByQuery = () => {
     const { query } = this.state;
+    const { ownBooks } = this.props;
     if (query.trim()) {
       BooksAPI.search(query.trim()).then((result) => {
-        this.setState({
-          books: result.error ? [] : result.map(bookFromDb),
-        });
+        if (result.error) {
+          this.setState({ books: [] });
+        } else {
+          const newBooks = result.map((book) => {
+            const alreadyOwned = ownBooks.find(
+              (ownedBook) => ownedBook.id === book.id
+            );
+            return {
+              ...bookFromDb(book),
+              ...(alreadyOwned && { shelf: alreadyOwned.shelf }),
+            };
+          });
+          this.setState({
+            books: newBooks,
+          });
+        }
       });
     }
   };
@@ -71,7 +85,7 @@ class SearchPage extends React.Component {
 }
 
 SearchPage.propTypes = {
-  history: PropTypes.object.isRequired,
+  ownBooks: PropTypes.array.isRequired,
 };
 
-export default withRouter(SearchPage);
+export default SearchPage;
