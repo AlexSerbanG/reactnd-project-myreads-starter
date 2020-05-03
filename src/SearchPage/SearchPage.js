@@ -27,31 +27,25 @@ class SearchPage extends React.Component {
 
   getBooksByQuery = () => {
     const { query } = this.state;
-    const { ownBooks } = this.props;
     if (query.trim()) {
       BooksAPI.search(query.trim()).then((result) => {
-        if (result.error) {
-          this.setState({ books: [] });
-        } else {
-          const newBooks = result.map((book) => {
-            const alreadyOwned = ownBooks.find(
-              (ownedBook) => ownedBook.id === book.id
-            );
-            return {
-              ...bookFromDb(book),
-              ...(alreadyOwned && { shelf: alreadyOwned.shelf }),
-            };
-          });
-          this.setState({
-            books: newBooks,
-          });
-        }
+        this.setState({ books: result.error ? [] : result.map(bookFromDb) });
       });
     }
   };
 
   render() {
     const { query, books } = this.state;
+    const { onChangeHandler, ownBooks } = this.props;
+    const shelfBooks = books.map((book) => {
+      const alreadyOwned = ownBooks.find(
+        (ownedBook) => ownedBook.id === book.id
+      );
+      return {
+        ...book,
+        ...(alreadyOwned && { shelf: alreadyOwned.shelf }),
+      };
+    });
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -77,7 +71,9 @@ class SearchPage extends React.Component {
         </div>
         <div className="search-books-results">
           {query !== "" && books.length === 0 && <p>No results</p>}
-          {query !== "" && books.length > 0 && <Shelf books={books} />}
+          {query !== "" && books.length > 0 && (
+            <Shelf books={shelfBooks} onChangeHandler={onChangeHandler} />
+          )}
         </div>
       </div>
     );
@@ -86,6 +82,7 @@ class SearchPage extends React.Component {
 
 SearchPage.propTypes = {
   ownBooks: PropTypes.array.isRequired,
+  onChangeHandler: PropTypes.func.isRequired,
 };
 
 export default SearchPage;

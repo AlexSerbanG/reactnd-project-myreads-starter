@@ -1,9 +1,17 @@
 import React from "react";
-import "./Book.css";
+import PropTypes from "prop-types";
 import Select from "../Select/Select";
 import { SelectOptions } from "../data";
+import "./Book.css";
 
-const Book = ({ title, authors, backgroundUrl, shelf }) => (
+const Book = ({
+  id,
+  title,
+  authors,
+  backgroundUrl,
+  shelf,
+  onChangeHandler,
+}) => (
   <div className="book">
     <div className="book-top">
       <div
@@ -18,7 +26,12 @@ const Book = ({ title, authors, backgroundUrl, shelf }) => (
         <Select
           value={shelf}
           options={SelectOptions}
-          onChangeHandler={(e) => console.log("here", e.target.value)}
+          onChangeHandler={(e) =>
+            onChangeHandler(
+              { id, title, authors, backgroundUrl, shelf },
+              e.target.value
+            )
+          }
         />
       </div>
     </div>
@@ -26,5 +39,14 @@ const Book = ({ title, authors, backgroundUrl, shelf }) => (
     <div className="book-authors">{authors.join(" & ")}</div>
   </div>
 );
+
+Book.propTypes = {
+  id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  authors: PropTypes.arrayOf(PropTypes.string).isRequired,
+  shelf: PropTypes.string.isRequired,
+  backgroundUrl: PropTypes.string.isRequired,
+  onChangeHandler: PropTypes.func.isRequired,
+};
 
 export default Book;

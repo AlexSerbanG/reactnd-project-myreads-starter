@@ -1,11 +1,11 @@
 import React from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { Shelf } from "../Shelf";
 import { ShelfType } from "../data";
 import "./Library.css";
 
-const Library = ({ books }) => {
+const Library = ({ books, onChangeHandler }) => {
   const shelves = {};
   books.forEach((book) => {
     if (shelves[book.shelf]) {
@@ -22,7 +22,14 @@ const Library = ({ books }) => {
       <div className="list-books-content">
         {ShelfType.map(
           ({ label, id, visible }) =>
-            visible && <Shelf books={shelves[id]} key={id} title={label} />
+            visible && (
+              <Shelf
+                books={shelves[id]}
+                key={id}
+                title={label}
+                onChangeHandler={onChangeHandler}
+              />
+            )
         )}
       </div>
       <div className="open-search">
@@ -36,6 +43,7 @@ const Library = ({ books }) => {
 
 Library.propTypes = {
   books: PropTypes.array.isRequired,
+  onChangeHandler: PropTypes.func.isRequired,
 };
 
 export default Library;
