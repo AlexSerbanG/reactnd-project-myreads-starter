@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Shelf } from "../Shelf";
 import * as BooksAPI from "../BooksAPI";
 import { debounce, bookFromDb } from "../utils";
@@ -29,15 +29,23 @@ class SearchPage extends React.Component {
     const { query } = this.state;
     if (query.trim()) {
       BooksAPI.search(query.trim()).then((result) => {
-        this.setState({
-          books: result.error ? [] : result.map(bookFromDb),
-        });
+        this.setState({ books: result.error ? [] : result.map(bookFromDb) });
       });
     }
   };
 
   render() {
     const { query, books } = this.state;
+    const { onChangeHandler, ownBooks } = this.props;
+    const shelfBooks = books.map((book) => {
+      const alreadyOwned = ownBooks.find(
+        (ownedBook) => ownedBook.id === book.id
+      );
+      return {
+        ...book,
+        ...(alreadyOwned && { shelf: alreadyOwned.shelf }),
+      };
+    });
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -63,7 +71,9 @@ class SearchPage extends React.Component {
         </div>
         <div className="search-books-results">
           {query !== "" && books.length === 0 && <p>No results</p>}
-          {query !== "" && books.length > 0 && <Shelf books={books} />}
+          {query !== "" && books.length > 0 && (
+            <Shelf books={shelfBooks} onChangeHandler={onChangeHandler} />
+          )}
         </div>
       </div>
     );
@@ -71,7 +81,8 @@ class SearchPage extends React.Component {
 }
 
 SearchPage.propTypes = {
-  history: PropTypes.object.isRequired,
+  ownBooks: PropTypes.array.isRequired,
+  onChangeHandler: PropTypes.func.isRequired,
 };
 
-export default withRouter(SearchPage);
+export default SearchPage;

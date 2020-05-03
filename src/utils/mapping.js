@@ -3,5 +3,5 @@ export const bookFromDb = (book) => ({
     shelf: book.shelf || "none",
     title: book.title,
     authors: book.authors || ["Unmentioned"],
-    backgroundUrl: book.imageLinks.smallThumbnail,
+    backgroundUrl: book.imageLinks? book.imageLinks.smallThumbnail : '',
   });
